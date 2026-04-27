@@ -159,9 +159,6 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
     }
 
     EpicenterSettingsStore.Snapshot s = EpicenterSettingsStore.snapshot();
-    if (!force && s.version == lastAppliedSettingsVersion) {
-      return;
-    }
     NativeEpicenterJni.nativeSetParams(
       nativeHandle,
       s.enabled,
@@ -171,7 +168,9 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
       s.balance,
       s.volume
     );
-    lastAppliedSettingsVersion = s.version;
+    NativeEpicenterJni.nativeSetEqEnabled(nativeHandle, s.eqEnabled);
+    NativeEpicenterJni.nativeSetEqPreampDb(nativeHandle, s.eqPreampDb);
+    NativeEpicenterJni.nativeSetEqBands(nativeHandle, s.eqBandGainsDb);
   }
 
   private void maybeLogProcessing() {
