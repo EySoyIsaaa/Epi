@@ -259,6 +259,16 @@ class EpicenterEngine {
     updateBassBoostFilters();
   }
 
+  void resetState() {
+    for (auto& c : channels_) {
+      initChannel(c);
+    }
+    initMono();
+    subBuffer_.clear();
+    updateDerivedFilters();
+    updateBassBoostFilters();
+  }
+
   // Compatibility no-op setters (UI may call EQ APIs while native chain is Epicenter+bassBoost only).
   void setEqEnabled(bool /*enabled*/) {}
   void setEqPreampDb(float /*preampDb*/) {}
@@ -509,6 +519,13 @@ Java_com_epicenter_hifi_NativeEpicenterJni_nativeCreate(JNIEnv*, jclass, jint sa
 extern "C" JNIEXPORT void JNICALL
 Java_com_epicenter_hifi_NativeEpicenterJni_nativeRelease(JNIEnv*, jclass, jlong handle) {
   delete fromHandle(handle);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_epicenter_hifi_NativeEpicenterJni_nativeResetState(JNIEnv*, jclass, jlong handle) {
+  EpicenterEngine* engine = fromHandle(handle);
+  if (!engine) return;
+  engine->resetState();
 }
 
 extern "C" JNIEXPORT void JNICALL

@@ -13,6 +13,8 @@ final class NativeEpicenterJni {
 
   static native void nativeRelease(long handle);
 
+  static native void nativeResetState(long handle);
+
   static native void nativeSetParams(
     long handle,
     boolean enabled,
