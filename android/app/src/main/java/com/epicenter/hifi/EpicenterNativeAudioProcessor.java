@@ -46,7 +46,7 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
       + " encoding=" + configuredEncoding);
 
     ensureNative();
-    resetState();
+    resetNativeState();
     applyCurrentSettings();
     return inputAudioFormat;
   }
@@ -114,7 +114,7 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
 
   @Override
   protected void onFlush() {
-    resetState();
+    resetNativeState();
     applyCurrentSettings();
   }
 
@@ -171,7 +171,7 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
     NativeEpicenterJni.nativeSetEqBands(nativeHandle, s.eqBandGainsDb);
   }
 
-  private void resetState() {
+  private void resetNativeState() {
     if (nativeHandle != 0L) {
       NativeEpicenterJni.nativeResetState(nativeHandle);
     }
