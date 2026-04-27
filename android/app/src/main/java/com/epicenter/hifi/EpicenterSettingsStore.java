@@ -16,6 +16,7 @@ final class EpicenterSettingsStore {
   private static volatile boolean eqEnabled = true;
   private static volatile float eqPreampDb = 0f;
   private static final float[] eqBandGainsDb = new float[EQ_BAND_COUNT];
+  private static volatile long version = 0L;
 
   private EpicenterSettingsStore() {}
 
@@ -44,10 +45,12 @@ final class EpicenterSettingsStore {
 
   static synchronized void setEqEnabled(boolean enabled) {
     eqEnabled = enabled;
+    version++;
   }
 
   static synchronized void setEqPreampDb(float preampDb) {
     eqPreampDb = clamp(preampDb, EQ_PREAMP_MIN_DB, EQ_PREAMP_MAX_DB);
+    version++;
   }
 
   static synchronized void setEqBand(int index, float gainDb) {
@@ -55,6 +58,7 @@ final class EpicenterSettingsStore {
       return;
     }
     eqBandGainsDb[index] = clamp(gainDb, EQ_INTERNAL_CUT_MIN_DB, EQ_INTERNAL_BOOST_MAX_DB);
+    version++;
   }
 
   static synchronized void setEqBands(float[] gainsDb) {
@@ -68,6 +72,7 @@ final class EpicenterSettingsStore {
     for (int i = len; i < EQ_BAND_COUNT; i++) {
       eqBandGainsDb[i] = 0f;
     }
+    version++;
   }
 
   private static float clamp(float value, float min, float max) {
