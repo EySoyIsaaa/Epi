@@ -43,6 +43,7 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
       + " encoding=" + configuredEncoding);
 
     ensureNative();
+    resetNativeState();
     applyCurrentSettings();
     return inputAudioFormat;
   }
@@ -135,6 +136,7 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
 
   @Override
   protected void onFlush() {
+    resetNativeState();
     applyCurrentSettings();
   }
 
@@ -167,8 +169,16 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
   }
 
   private void applyCurrentSettings() {
+    applyCurrentSettings(false);
+  }
+
+  private void applyCurrentSettings(boolean forceResetNativeState) {
     if (nativeHandle == 0L) {
       return;
+    }
+
+    if (forceResetNativeState) {
+      resetNativeState();
     }
 
     EpicenterSettingsStore.Snapshot s = EpicenterSettingsStore.snapshot();
@@ -181,6 +191,15 @@ final class EpicenterNativeAudioProcessor extends BaseAudioProcessor {
       s.balance,
       s.volume
     );
+    NativeEpicenterJni.nativeSetEqEnabled(nativeHandle, s.eqEnabled);
+    NativeEpicenterJni.nativeSetEqPreampDb(nativeHandle, s.eqPreampDb);
+    NativeEpicenterJni.nativeSetEqBands(nativeHandle, s.eqBandGainsDb);
+  }
+
+  private void resetNativeState() {
+    if (nativeHandle != 0L) {
+      NativeEpicenterJni.nativeResetState(nativeHandle);
+    }
   }
 
   private void maybeLogProcessing() {
